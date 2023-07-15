@@ -17,10 +17,10 @@ from keras.preprocessing import image
 
 
 app=FastAPI()
-
-labels=['freshApple','freshBanana','freshOrange','rottenApple','rottenBanana','rottenOrange']
-model=load_model("Fresh_Rotten_Fruits_MobileNetV2_Transfer_Learning2(98).h5")
-model.make_predict_function()
+with app.app_context():
+    labels=['freshApple','freshBanana','freshOrange','rottenApple','rottenBanana','rottenOrange']
+    model=load_model("Fresh_Rotten_Fruits_MobileNetV2_Transfer_Learning2(98).h5")
+    model.make_predict_function()
 
 def predict_label(img_path):
     '''img=cv2.imread("/kaggle/input/apples-bananas-oranges/original_data_set/freshbanana/Screen Shot 2018-06-12 at 10.00.42 PM.png")
