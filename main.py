@@ -16,7 +16,7 @@ from keras.preprocessing import image
 
 
 
-app=FastAPI()
+app=Flask(__name__)
 app.app_context().push()
 labels=['freshApple','freshBanana','freshOrange','rottenApple','rottenBanana','rottenOrange']
 model=load_model("Fresh_Rotten_Fruits_MobileNetV2_Transfer_Learning2(98).h5")
@@ -72,18 +72,20 @@ def dfruit(img_path):
     else:
         return labels[index][6:]
 
-@app.get("/")
+@app.route("/")
 def main():
     return render_template("index.html")
-@app.post("/submit")
+@app.route("/submit",methods=['GET',"POST"])
 def get_output():
-    try:
+    if request.method=="POST":
         img=request.files['my_image']
-        img_path="static/"+img.filename
-        img.save(img_path)
-        p=predict_label(img_path) 
-        k=predfruit(img_path)
-        return render_template("ps.html",prediction=k,result=round(p*100,3),ness=k,fruit=dfruit(img_path),img_path=img_path)
-    except:
-        return render_template("ps.html")
+        try:
+            img_path="static/"+img.filename
+            img.save(img_path)
+            p=predict_label(img_path) 
+            k=predfruit(img_path)
+            return render_template("ps.html",prediction=k,result=round(p*100,3),ness=k,fruit=dfruit(img_path),img_path=img_path)
+        except:
+            return render_template("ps.html")
+    return render_template("ps.html")
 
