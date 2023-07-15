@@ -17,7 +17,6 @@ from keras.preprocessing import image
 
 
 app=Flask(__name__)
-app.app_context().push()
 labels=['freshApple','freshBanana','freshOrange','rottenApple','rottenBanana','rottenOrange']
 model=load_model("Fresh_Rotten_Fruits_MobileNetV2_Transfer_Learning2(98).h5")
 model.make_predict_function()
