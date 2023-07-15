@@ -1,6 +1,13 @@
 from flask import Flask,render_template,request
 from keras.models import load_model
 import tensorflow
+from fastapi import FastAPI
+import uvicorn
+from pydantic import BaseModel
+import pickle
+import numpy
+import pandas
+import gunicorn
 
 import numpy as np
 from keras.models import Sequential
@@ -9,7 +16,7 @@ from keras.preprocessing import image
 
 
 
-app=Flask(__name__)
+app=FastAPI()
 
 labels=['freshApple','freshBanana','freshOrange','rottenApple','rottenBanana','rottenOrange']
 model=load_model("Fresh_Rotten_Fruits_MobileNetV2_Transfer_Learning2(98).h5")
@@ -65,23 +72,18 @@ def dfruit(img_path):
     else:
         return labels[index][6:]
 
-@app.route("/")
+@app.get("/")
 def main():
     return render_template("index.html")
-@app.route("/submit",methods=['GET',"POST"])
+@app.post("/submit")
 def get_output():
-    if request.method=="POST":
+    try:
         img=request.files['my_image']
-        try:
-            img_path="static/"+img.filename
-            img.save(img_path)
-            p=predict_label(img_path) 
-            k=predfruit(img_path)
-            return render_template("ps.html",prediction=k,result=round(p*100,3),ness=k,fruit=dfruit(img_path),img_path=img_path)
-        except:
-            return render_template("ps.html")
-    return render_template("ps.html")
-if __name__=="__main__":
-    app.  run(debug=True)
-
+        img_path="static/"+img.filename
+        img.save(img_path)
+        p=predict_label(img_path) 
+        k=predfruit(img_path)
+        return render_template("ps.html",prediction=k,result=round(p*100,3),ness=k,fruit=dfruit(img_path),img_path=img_path)
+    except:
+        return render_template("ps.html")
 
